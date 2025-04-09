@@ -25,9 +25,9 @@ BitcoinExchange::BitcoinExchange(const std::string &file)
     size_t          commaPos;
 
     if (!s.is_open())
-        throw (BitcoinExchange::OpenFailure());
+        throw (OpenFailure());
     if (!isValidFile(file))
-        throw (BitcoinExchange::InvalidFile());
+        throw (InvalidFile());
     std::getline(s, line); //skips "data, exchange rate"
     while (std::getline(s, line))
     {
