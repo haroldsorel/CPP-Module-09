@@ -12,3 +12,56 @@
 
 #pragma once
 
+#include <iostream>
+#include <stack>
+
+class RPN
+{
+    private:
+        std::stack<int> _stack;
+    public:
+        RPN();
+        RPN(const RPN &src);
+        ~RPN();
+        RPN &operator=(const RPN &src);
+
+        void    printFifo();
+        void    printLifo();
+        void    printRes(std::string &op);
+        int     eval(std::string &op);
+
+        class NotEnoughOperands : public std::exception
+        {
+            public:
+                virtual const char *what() const throw()
+                {
+                    return ("Error: Not Enough Operands");
+                }
+        };
+        class NotEnoughOperators : public std::exception
+        {
+            public:
+                virtual const char *what() const throw()
+                {
+                    return ("Error: Not Enough Operators");
+                }
+        };
+        class DivisionByZero : public std::exception
+        {
+            public:
+                virtual const char *what() const throw()
+                {
+                    return ("Error: Division By Zero");
+                }
+        };
+        class IntegerOverflow : public std::exception
+        {
+            public:
+                virtual const char *what() const throw()
+                {
+                    return ("Error: Integer Overflow");
+                }
+        };
+};
+
+bool    isOperator(char c);
