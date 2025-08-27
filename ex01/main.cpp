@@ -21,9 +21,9 @@ bool    isOperator(char c)
 
 bool    isValidInput(const std::string &op)
 {
-    if (op.length() < 1 || op.back() == ' ')
+    if (op.length() < 1 || op[op.length() - 1] == ' ')
         return (false);
-    for(int i = 0; i < op.length(); i++)
+    for(size_t i = 0; i < op.length(); i++)
     {
         switch (i % 2)
         {
@@ -47,7 +47,7 @@ std::string trimmedStr(const std::string &op)
 {
     std::string trimmedOp;
 
-    for(int i = 0; i < op.length(); i++)
+    for(size_t i = 0; i < op.length(); i++)
     {
         if(i % 2 == 0)
             trimmedOp.push_back(op[i]);
@@ -74,6 +74,7 @@ int main(int argc, char **argv)
 
     //trimming the spaces so it is easier to iterate through the string
     op = trimmedStr(op);
+
 
     //computing the result if the operation is valid
     RPN rpn;

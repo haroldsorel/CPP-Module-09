@@ -1,9 +1,9 @@
 NAME = btc
-SRC =  main.cpp BitcoinExchange.cpp
+SRC =  main.cpp BitcoinExchange.cpp input_parsing.cpp
 OBJ = ${SRC:.cpp=.o}
 CC = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
-CXX = $(CC)
+CXX = $(CC) $(CFLAGS)
 
 all : ${NAME}
 

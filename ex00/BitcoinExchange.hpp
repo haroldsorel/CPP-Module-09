@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <cstdlib>
 
 class BitcoinExchange
 {
@@ -29,7 +30,7 @@ class BitcoinExchange
         BitcoinExchange &operator=(const BitcoinExchange &src);
 
         void    printExchange();
-        bool    getValue(std::string &line);
+        bool    getValue(std::string &date, float num);
         
         class InvalidFile : public std::exception
         {
@@ -46,6 +47,3 @@ class BitcoinExchange
             }
         };
 };
-
-bool        isValidDate(std::string &date);
-bool        isValidNumber(std::string &num, int flag);
