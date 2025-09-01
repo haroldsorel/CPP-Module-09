@@ -66,7 +66,7 @@ int main(int argc, char **argv)
         return (0);
     }
     PmergeMe pmm(argv);
-    pmm.sortVec();
+    pmm.sortAll();
     pmm.printInfo();
     return (0);
 }

@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <deque>
+#include <list>
 #include <cstdlib>
 #include <climits>
 #include <utility>
@@ -61,19 +62,6 @@ std::ostream& operator<<(std::ostream& os, const std::vector<std::pair<T, T> > &
     return os;
 }
 
-template <typename T>
-void    printC(T &c)
-{
-    typename T::iterator it;
-
-    for (it = c.begin(); it != c.end(); it++)
-    {
-        if (it + 1 != c.end())
-            std::cout << *it << " ";
-    }
-    std::cout << std::endl;
-}
-
 class PmergeMe
 {
     private:
@@ -82,7 +70,7 @@ class PmergeMe
         std::vector<int>    _Svec;
         std::deque<int>     _Sdeq;
         double              _time_to_sort_vec;
-        //double              _time_to_sort_deq;
+        double              _time_to_sort_deq;
     public:
         PmergeMe();
         PmergeMe(char **argv);
@@ -97,3 +85,11 @@ class PmergeMe
         void    sortAll();
         void    printInfo()const;
 };
+
+std::vector<std::pair<int, int> > mergeSort(std::vector<std::pair<int, int> > &vec);
+std::vector<std::pair<int, int> > make_pairs(std::vector<int> &vec);
+std::vector<int> insert(std::vector<std::pair<int, int> > pairs, int remainer);
+
+std::deque<std::pair<int, int> > mergeSort(std::deque<std::pair<int, int> > &vec);
+std::deque<std::pair<int, int> > make_pairs(std::deque<int> &vec);
+std::deque<int> insert(std::deque<std::pair<int, int> > pairs, int remainer);

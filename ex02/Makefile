@@ -1,5 +1,5 @@
 NAME = PmergeMe
-SRC =  main.cpp PmergeMe.cpp
+SRC =  main.cpp PmergeMe.cpp sortVec_utils.cpp sortDeq_utils.cpp
 OBJ = ${SRC:.cpp=.o}
 CC = c++
 CXX = $(CC) $(CFLAGS)
