@@ -13,41 +13,69 @@
 #pragma once
 
 #include <iostream>
-#include <cstdlib>
-#include <climits>
 #include <vector>
 #include <deque>
-#include <list>
+#include <cstdlib>
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec)
+{
+    typename std::vector<T>::const_iterator it;
+
+    for (it = vec.begin(); it != vec.end(); ++it)
+    {
+        os << *it;
+        if (it + 1 != vec.end())
+            os << " ";
+    }
+    return os;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::deque<T>& deq)
+{
+    typename std::deque<T>::const_iterator it;
+
+    for (it = deq.begin(); it != deq.end(); ++it)
+    {
+        os << *it;
+        if (std::next(it) != deq.end())
+            os << " ";
+    }
+    return os;
+}
+
+template <typename T>
+void    printC(T &c)
+{
+    typename T::iterator it;
+
+    for (it = c.begin(); it != c.end(); it++)
+    {
+        if (it + 1 != c.end())
+            std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+}
 
 class PmergeMe
 {
     private:
-        double  _vec_sort_time;
-        double  _deq_sort_time;
-
-        std::vector<int>    _vec;
-        std::deque<int>     _deq;
+        std::vector<int>    _Uvec;
+        std::deque<int>     _Udeq;
+        std::vector<int>    _Svec;
+        std::deque<int>     _Sdeq;
     public:
-
-        //construtors
         PmergeMe();
-        PmergeMe(char **list);
+        PmergeMe(char **argv);
         PmergeMe(const PmergeMe &src);
 
-        //destructors
         ~PmergeMe();
 
-        //operator overloads
-        PmergeMe& operator=(const PmergeMe& other);
+        PmergeMe &operator=(const PmergeMe &src);
 
-        //getters
-        double  get_vec_start_time()const;
-        double  get_deq_start_time()const;
-
-        //methods
-        void    vec_sort();
-        void    deq_sort();
-        void    vec_print();
-        void    deq_print();
-        void    print_all();
+        void    sortVec();
+        void    sortDeq();
+        void    sortAll();
+        void    printInfo()const;
 };

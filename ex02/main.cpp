@@ -12,96 +12,61 @@
 
 #include "PmergeMe.hpp"
 
-std::vector<int> argvToIntVector(char **argv)
+bool    isValidInput(char **argv)
 {
-    int     i = 0;
-
-    std::vector<int> vec;
-    while (argv[i])
-    {
-        vec.push_back(std::atoi(argv[i]));
-        i++;
-    }
-    return (vec);
-}
-
-std::deque<int> argvToIntDequeu(char **argv)
-{
-    int     i = 0;
-
-    std::deque<int> deq;
-    while (argv[i])
-    {
-        deq.push_back(std::atoi(argv[i]));
-        i++;
-    }
-    return (deq);
-}
-
-bool    handleError(char **argv)
-{
-    int         i = 0;
-    long        bufi;
-    char        *end;
-    std::string bufs;
+    int i = 0;
+    std::string buffer;
 
     while (argv[i])
     {
-        std::string bufs(argv[i]);
-
-        if (bufs.empty())
+        buffer = argv[i];
+        //check if it's empty
+        if (buffer.empty())
         {
-            std::cout << "Error: Empty argument" << std::endl;
-            return false;
-        }
-        
-        if(bufs.find_first_not_of("0123456789") != std::string::npos)
-        {
-            std::cout << "Error: Wrong number" << std::endl;
+            std::cout << "There is an empty argument" << std::endl;
             return (false);
         }
-        if (bufs.length() > 10)
+        //check if there are other characters then digits
+        if (buffer.find_first_not_of("0123456789") != std::string::npos)
         {
-            std::cout << "Error: Integer overflow"<< std::endl;
+            std::cout << buffer << " : invalid character" << std::endl;
             return (false);
         }
-        bufi = atol(bufs.c_str());
-        if (bufi > INT_MAX)
+        //killing leading zeroes
+        for (std::string::iterator it = buffer.begin(); it != buffer.end() && *it == '0';)
+            it = buffer.erase(it);
+        //checking if it wasn't only zeroes
+        if (buffer.empty())
+            return (true);
+        //checking if there are no overflows. One part to check Long overflow. one part to check int overflow
+        if (buffer.length() > 10)
         {
-            std::cout << "Error: Integer overflow" << std::endl;
+            std::cout << buffer << " : overflowing(1)" << std::endl;
             return (false);
         }
+        //the number safely goes in a long
+        long l = std::atol(buffer.c_str());
+        //checking fot in overflow
+        if (l > INT_MAX)
+        {
+            std::cout << buffer <<" : overflowing(2)" << std::endl;
+            return (false);
+        }
+        //string ok!:) to the next
         i++;
     }
     return (true);
 }
 
 int main(int argc, char **argv)
-{
-    std::vector<int> vec;
-    std::deque<int> deq;
-
-    std::vector<int>::iterator itv;
-    std::deque<int>::iterator itd;
-    if (argc < 2)
+{   
+    if (argc < 2 || !(isValidInput(++argv)))
     {
-        std::cerr << "Error: Enter a Positive Integer Sequence" << std::endl;
-        return (1);
+        std::cout << "Error : Enter a valid Positive Integer Sequence"<< std::endl;
+        return (0);
     }
-    argv++;
-    if (!handleError(argv))
-        return (1);
-    vec = argvToIntVector(argv);
-    deq = argvToIntDequeu(argv);
-    for (itv = vec.begin(); itv != vec.end(); ++itv)
-    {
-        std::cout << *itv << " ";
-    }
-    std::cout << std::endl;
-    for (itd = deq.begin(); itd != deq.end(); ++itd)
-    {
-        std::cout << *itd << " ";
-    }
-    std::cout << std::endl;
+    PmergeMe pmm(argv);
+    pmm.sortAll();
+    pmm.printInfo();
     return (0);
 }
