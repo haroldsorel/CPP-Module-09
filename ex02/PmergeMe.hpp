@@ -16,6 +16,10 @@
 #include <vector>
 #include <deque>
 #include <cstdlib>
+#include <climits>
+#include <utility>
+#include <algorithm>
+#include <ctime>
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec)
@@ -32,14 +36,26 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec)
 }
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::deque<T>& deq)
+std::ostream& operator<<(std::ostream& os, const std::deque<T> &deq)
 {
     typename std::deque<T>::const_iterator it;
 
     for (it = deq.begin(); it != deq.end(); ++it)
     {
         os << *it;
-        if (std::next(it) != deq.end())
+        if (it + 1 != deq.end())
+            os << " ";
+    }
+    return os;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<std::pair<T, T> > &pairs)
+{
+    for (size_t i = 0; i < pairs.size(); i++)
+    {
+        os << "("<< pairs[i].first << ", " << pairs[i].second << ")";
+        if (i < pairs.size() - 1)
             os << " ";
     }
     return os;
@@ -65,6 +81,8 @@ class PmergeMe
         std::deque<int>     _Udeq;
         std::vector<int>    _Svec;
         std::deque<int>     _Sdeq;
+        double              _time_to_sort_vec;
+        //double              _time_to_sort_deq;
     public:
         PmergeMe();
         PmergeMe(char **argv);

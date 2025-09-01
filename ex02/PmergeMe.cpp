@@ -60,12 +60,12 @@ PmergeMe &PmergeMe::operator=(const PmergeMe &src)
     return (*this);
 }
 
-std::vector<int> merge(std::vector<int> v1, std::vector<int> v2)
+std::vector<std::pair<int, int> > merge(std::vector<std::pair<int, int> > v1, std::vector<std::pair<int, int> > v2)
 {
     size_t i = 0;
     size_t j = 0;
 
-    std::vector<int> sorted;
+    std::vector<std::pair<int, int> > sorted;
     //std::cout << "merging : " << v1 << " and " << v2;
     while (i < v1.size() && j < v2.size())
     {
@@ -94,13 +94,13 @@ std::vector<int> merge(std::vector<int> v1, std::vector<int> v2)
     return (sorted);
 }
 
-std::vector<int> mergeSort(std::vector<int> &vec)
+std::vector<std::pair<int, int> > mergeSort(std::vector<std::pair<int, int> > &vec)
 {
     if (vec.size() == 1)
         return vec;
-    std::vector<int>::iterator half = vec.begin() + (vec.size() / 2);
-    std::vector<int> v1(vec.begin(), half);
-    std::vector<int> v2(half, vec.end());
+    std::vector<std::pair<int, int> >::iterator half = vec.begin() + (vec.size() / 2);
+    std::vector<std::pair<int, int> > v1(vec.begin(), half);
+    std::vector<std::pair<int, int> > v2(half, vec.end());
     //std::cout << v1 << std::endl;
     //std::cout << v2 << std::endl;
     return(merge(mergeSort(v1), mergeSort(v2)));
@@ -126,7 +126,7 @@ std::vector<int> jacobsthal_generator(int size)
     return (jacobsthal_numbers);
 }
 
-std::vector<int> pend_insertion_order(size_t size, std::vector<int> smalls)
+std::vector<int> pend_insertion_order(size_t size)
 {
     std::vector<int> jacobsthal_numbers;
     std::vector<int> insertion_order;
@@ -145,45 +145,97 @@ std::vector<int> pend_insertion_order(size_t size, std::vector<int> smalls)
         insertion_order.push_back(2);
         return (insertion_order);
     }
-
+    //generating jacobthal's number
     jacobsthal_numbers = jacobsthal_generator(size);
     std::cout << "jacobsthal number : " << jacobsthal_numbers << std::endl;
+    //filling jacobsthal's numbers and backfilling between milestones 
     for (size_t i = 1; i < jacobsthal_numbers.size(); i++)
     {
         milestone2 = jacobsthal_numbers[i];
         insertion_order.push_back(milestone2);
-        inside = milestone2 - 1; //amount of numbers to insert between milestones
+        inside = milestone2 - 1;
         while (inside > milestone1)
         {
-            insertion_order.push_back(inside); //backfilling from milestone2 to milestone1
+            insertion_order.push_back(inside);
             inside--;
         }
         milestone1 = milestone2;
     }
-
-    //backfilling the rest 
+    //backfilling the rest if there is no next milestone
     for (int i = size; i > milestone2; i--)
         insertion_order.push_back(i);
     std::cout << "insertion order : " << insertion_order << std::endl;
-
-    //actually putting the smalls in that order
-    for (size_t i = 0; i < size; i++)
-    {
-        pend_order.push_back(smalls[insertion_order[i] - 1]);
-    }
-    std::cout << "pend order : " << pend_order << std::endl;
     return (insertion_order);
 }
 
-void    insert(std::vector<int> main, std::vector<int> pend, std::vector<int> bigs, int remainer)
+std::vector<std::pair<int, int> > make_pairs(std::vector<int> &vec)
 {
-    //To Do
+    size_t i;
+    size_t j;
+    std::vector<std::pair<int, int> > pairs;
+
+    for (i = 0, j = i + 1; i < vec.size() && j < vec.size(); i+=2, j+=2)
+    {
+        int first = std::max(vec[i], vec[j]);
+        int second = std::min(vec[i], vec[j]);
+        pairs.push_back(std::make_pair(first, second));
+    }
+    return (pairs);
+}
+
+std::vector<int> insert(std::vector<std::pair<int, int> > pairs, int remainer)
+{
+    std::vector<int> main;
+    std::vector<int> pend;
+    std::vector<int> pend_order_index;
+
+    //creates pend and main based on the pairs
+    for (size_t i = 0; i < pairs.size(); i++)
+    {
+        main.push_back(pairs[i].first);
+        pend.push_back(pairs[i].second);
+    }
+    //first element in pend is smaller than the first element main, 
+    //we insert it in the ‘0’ index of S.
+    main.insert(main.begin(), pend.front());
+    pend.erase(pend.begin());
+    std::cout << "main : " << main << std::endl;
+    std::cout << "pend : " << pend << std::endl;
+    //we build a jacobsthal number vector based on the size of the pend.
+    //this will be used to determine the pend insertion order
+    pend_order_index = pend_insertion_order(pend.size());
+    std::cout << "pend order by index: " << pend_order_index << std::endl;
+    //now that we have the insertion order i need to use the pairs again so i have the upperbounds
+    //first i need to take off the first pair because i already inserted it
+    pairs.erase(pairs.begin());
+    std::vector<int>::iterator upper_limit;
+    std::vector<int>::iterator insert_position;
+    for (size_t i = 0; i < pend_order_index.size(); i++)
+    {
+        //isolate each pair. the big pair draws the line where you will be searching in the main to insert the small one
+        int big = pairs[pend_order_index[i]].first;
+        int small = pairs[pend_order_index[i]].second;
+        //find the position of the upperbound in main
+        upper_limit  = find(main.begin(), main.end(), big);
+        //lower bound returns an iterator to the first value that is bigger or equal (in the range it is given)
+        //returns begin()
+        insert_position = std::lower_bound(main.begin(), upper_limit, small);
+        main.insert(insert_position, small);
+    }
+    //if there was a remainer. add it.
+    if (remainer != -1)
+    {
+        insert_position = std::lower_bound(main.begin(), main.end(), remainer);
+        main.insert(insert_position, remainer);
+    }
+    return (main);
 }
 
 void    PmergeMe::sortVec()
 {
-    std::cout << "SORTING VECTOR..."<< std::endl;
+    std::cout << "SORTING VECTOR..." << "\n" << std::endl;
 
+    clock_t start = clock();
     //do not sort if there is only one number
     if (this->_Uvec.size() <= 1)
     {
@@ -193,34 +245,35 @@ void    PmergeMe::sortVec()
 
     //STEP ONE : Making pairs and sorting them
     //Pairs are in 2 different containers but are linked by index, maintaining relationship
-    std::vector<int>            bigs;
-    std::vector<int>            smalls;
-    size_t i, j;
+    //Bigs will be sorted in order and smalls order will follow Jacobsthals number so we need to keep the pairs
     int remainer = -1;
 
-    for (i = 0, j = i + 1; i < this->_Uvec.size() && j < this->_Uvec.size(); i+=2, j+=2)
-    {
-        bigs.push_back(std::max(this->_Uvec[i], this->_Uvec[j]));
-        smalls.push_back(std::min(this->_Uvec[i], this->_Uvec[j]));
-    }
-    //if there is an uneven amount of numbers add the remaining in the smalls
-    if (i < this->_Uvec.size())
-        remainer = this->_Uvec[i];
-    std::cout << "bigs : "<< bigs << std::endl;
-    std::cout << "smalls : " << smalls << std::endl;
+    if (this->_Uvec.size() % 2 != 0)
+        remainer = this->_Uvec.back();
+    std::vector<std::pair<int, int> > pairs = make_pairs(this->_Uvec);
 
-    //STEP TWO : Sorting the bigs using a recursive merge sort i can insert the smalls inside;
-    std::vector<int>    main = mergeSort(bigs);
+    std::cout << "pairs before sorting : " << pairs << std::endl;
+    std::cout << "remainer : " << remainer << std::endl;
 
-    //STEP THREE : determine the order of insertion of the pend
-    //To Do -> pair it back with the bigs
-    std::vector<int> pend = pend_insertion_order(smalls.size(), smalls);
+    //STEP TWO : Sorting the pairs by order of the biggest of each pair using a recursive merge;
+    pairs = mergeSort(pairs);
+    std::cout << "pairs after sorting : " << pairs << std::endl;
 
-    //STEP FOUR : insert pend numbers into main
-    std::cout << "main before insertion : " << main << std::endl;
-    insert(main, pend, bigs, remainer);
-    std::cout << "main after insertion : " << main << std::endl;
-    std::cout << "Oh damn it's sorted!" << main << std::endl;
+
+    //STEP THREE : Make a main vector and a pend vector. main has the sorted bigs and pens has the corresponding smalls.
+    //insert the pend in the main in the order that is indicated by the corresponding Jacobsthal's number
+    std::vector<int> main = insert(pairs, remainer);
+
+    //time's up
+    clock_t end = clock();
+    std::cout << start << " -> " << end << std::endl;
+    double elapsed_secs = double(end - start) / CLOCKS_PER_SEC;
+    std::cout << elapsed_secs << std::endl;
+    double elapsed_ms = elapsed_secs * 1000.0;
+    std::cout << elapsed_ms << std::endl;
+    
+    //assigning values
+    this->_time_to_sort_vec = elapsed_ms;
     this->_Svec = main;
 }
 
@@ -241,9 +294,9 @@ void    PmergeMe::printInfo()const
     std::cout << std::endl;
     std::cout << "Before : " << this->_Uvec << std::endl;
     std::cout << "After : " << this->_Svec << std::endl;
-    //std::cout << "Time To Process a Range Of " << (this->_Uvec).size() << " elements with std::deque : " << this->_vecSortTime << std::endl;
-    std::cout << "Before : " << this->_Udeq << std::endl;
-    std::cout << "After : " << this->_Sdeq << std::endl;
-    //std::cout << "Time To Process a Range Of " << (this->_Udeq).size() << " elements with std::deque : " << this->_deqSortTime << std::endl;
-    std::cout << std::endl;
+    std::cout << "Time To Process a Range Of " << (this->_Uvec).size() << " elements with std::vector : " << this->_time_to_sort_vec << std::endl;
+    //std::cout << "Before : " << this->_Udeq << std::endl;
+    //std::cout << "After : " << this->_Sdeq << std::endl;
+    //std::cout << "Time To Process a Range Of " << (this->_Udeq).size() << " elements with std::deque : " << this->_time_to_sort_deq << std::endl;
+    //std::cout << std::endl;
 }
