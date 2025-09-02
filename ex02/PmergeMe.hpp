@@ -62,6 +62,18 @@ std::ostream& operator<<(std::ostream& os, const std::vector<std::pair<T, T> > &
     return os;
 }
 
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::deque<std::pair<T, T> > &pairs)
+{
+    for (size_t i = 0; i < pairs.size(); i++)
+    {
+        os << "("<< pairs[i].first << ", " << pairs[i].second << ")";
+        if (i < pairs.size() - 1)
+            os << " ";
+    }
+    return os;
+}
+
 class PmergeMe
 {
     private:
