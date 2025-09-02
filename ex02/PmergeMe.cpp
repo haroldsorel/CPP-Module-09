@@ -81,12 +81,12 @@ void    PmergeMe::sortVec()
         remainer = this->_Uvec.back();
     std::vector<std::pair<int, int> > pairs = make_pairs(this->_Uvec);
 
-    std::cout << "pairs before sorting : " << pairs << std::endl;
-    std::cout << "remainer : " << remainer << std::endl;
+    //std::cout << "pairs before sorting : " << pairs << std::endl;
+    //std::cout << "remainer : " << remainer << std::endl;
 
     //STEP TWO : Sorting the pairs by order of the biggest of each pair using a recursive merge;
     pairs = mergeSort(pairs);
-    std::cout << "pairs after sorting : " << pairs << std::endl;
+    //std::cout << "pairs after sorting : " << pairs << std::endl;
 
 
     //STEP THREE : Make a main vector and a pend vector. main has the sorted bigs and pens has the corresponding smalls.
@@ -124,12 +124,12 @@ void    PmergeMe::sortDeq()
         remainer = this->_Udeq.back();
     std::deque<std::pair<int, int> > pairs = make_pairs(this->_Udeq);
 
-    std::cout << "pairs before sorting : " << pairs << std::endl;
-    std::cout << "remainer : " << remainer << std::endl;
+    //std::cout << "pairs before sorting : " << pairs << std::endl;
+    //std::cout << "remainer : " << remainer << std::endl;
 
     //STEP TWO : Sorting the pairs by order of the biggest of each pair using a recursive merge;
     pairs = mergeSort(pairs);
-    std::cout << "pairs after sorting : " << pairs << std::endl;
+    //std::cout << "pairs after sorting : " << pairs << std::endl;
 
 
     //STEP THREE : Make a main vector and a pend vector. main has the sorted bigs and pens has the corresponding smalls.

@@ -65,8 +65,6 @@ std::deque<int> jacobsthal_generator_deq(int size)
     int num = 1;
     std::deque<int> jacobsthal_numbers;
 
-    //jacobsthal_numbers.push_back(Jmin2);
-    //jacobsthal_numbers.push_back(Jmin1);
     while (num <= size)
     {
         num = Jmin1 + (2 * Jmin2);
@@ -89,34 +87,34 @@ std::deque<int> pend_insertion_order_deq(size_t size)
     int inside;
 
     //hardcoding case 1 and 2
-    insertion_order.push_back(1);
+    insertion_order.push_back(0);
     if (size == 1)
         return (insertion_order);
     if (size == 2)
     {
-        insertion_order.push_back(2);
+        insertion_order.push_back(1);
         return (insertion_order);
     }
     //generating jacobthal's number
     jacobsthal_numbers = jacobsthal_generator_deq(size);
-    std::cout << "jacobsthal number : " << jacobsthal_numbers << std::endl;
+    //std::cout << "jacobsthal number : " << jacobsthal_numbers << std::endl;
     //filling jacobsthal's numbers and backfilling between milestones 
     for (size_t i = 1; i < jacobsthal_numbers.size(); i++)
     {
         milestone2 = jacobsthal_numbers[i];
-        insertion_order.push_back(milestone2);
+        insertion_order.push_back(milestone2 - 1);
         inside = milestone2 - 1;
         while (inside > milestone1)
         {
-            insertion_order.push_back(inside);
+            insertion_order.push_back(inside - 1);
             inside--;
         }
         milestone1 = milestone2;
     }
     //backfilling the rest if there is no next milestone
     for (int i = size; i > milestone2; i--)
-        insertion_order.push_back(i);
-    std::cout << "insertion order : " << insertion_order << std::endl;
+        insertion_order.push_back(i - 1);
+    //std::cout << "insertion order : " << insertion_order << std::endl;
     return (insertion_order);
 }
 
@@ -149,34 +147,41 @@ std::deque<int> insert(std::deque<std::pair<int, int> > pairs, int remainer)
     }
     //first element in pend is smaller than the first element main, 
     //we insert it in the ‘0’ index of S.
+    //std::cout << "main before : " << main << std::endl;
+    //std::cout << "pend before : " << pend << std::endl;
     main.insert(main.begin(), pend.front());
     pend.erase(pend.begin());
-    std::cout << "main before : " << main << std::endl;
-    std::cout << "pend before : " << pend << std::endl;
+    //std::cout << "main after : " << main << std::endl;
+    //std::cout << "pend after : " << pend << std::endl;
     if (pairs.size() != 1)
     {
-        std::cout << "main after : " << main << std::endl;
-        std::cout << "pend after : " << pend << std::endl;
         //we build a jacobsthal number deque based on the size of the pend.
         //this will be used to determine the pend insertion order
         pend_order_index = pend_insertion_order_deq(pend.size());
-        std::cout << "pend order by index: " << pend_order_index << std::endl;
         //now that we have the insertion order i need to use the pairs again so i have the upperbounds
         //first i need to take off the first pair because i already inserted it
         pairs.erase(pairs.begin());
         std::deque<int>::iterator upper_limit;
         std::deque<int>::iterator insert_position;
+        //std::cout << "pairs : " << pairs << std::endl;
+        //std::cout << "main BEFORE ANYTHING : " << main << std::endl;
+        //std::cout << "pend BEFORE ANYTHING : " << pend << std::endl;
+        //std::cout << "pend insertion order : "<< pend_order_index << std::endl;
         for (size_t i = 0; i < pend_order_index.size(); i++)
         {
             //isolate each pair. the big pair draws the line where you will be searching in the main to insert the small one
             int big = pairs[pend_order_index[i]].first;
             int small = pairs[pend_order_index[i]].second;
+            //std::cout << "pend to insert : " << small << std::endl;
+            //std::cout << "upper bound of the pend : " << big << std::endl;
             //find the position of the upperbound in main
             upper_limit  = find(main.begin(), main.end(), big);
             //lower bound returns an iterator to the first value that is bigger or equal (in the range it is given)
-            //returns begin()
+            //it uses binary search. Not left to right:)
             insert_position = std::lower_bound(main.begin(), upper_limit, small);
+            //std::cout << "main before insertion : " << main << std::endl;
             main.insert(insert_position, small);
+            //std::cout << "main after insertion : " << main << std::endl;
         }
     }
     //if there was a remainer. add it.

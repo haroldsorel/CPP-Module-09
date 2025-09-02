@@ -35,9 +35,7 @@ bool    isValidInput(char **argv)
         //killing leading zeroes
         for (std::string::iterator it = buffer.begin(); it != buffer.end() && *it == '0';)
             it = buffer.erase(it);
-        //checking if it wasn't only zeroes
-        if (buffer.empty())
-            return (true);
+        //if the input was 0 or 000000 this will be empty, no worries atol will return 0
         //checking if there are no overflows. One part to check Long overflow. one part to check int overflow
         if (buffer.length() > 10)
         {
@@ -46,7 +44,7 @@ bool    isValidInput(char **argv)
         }
         //the number safely goes in a long
         long l = std::atol(buffer.c_str());
-        //checking fot in overflow
+        //checking for in overflow
         if (l > INT_MAX)
         {
             std::cout << buffer <<" : overflowing(2)" << std::endl;
@@ -60,7 +58,8 @@ bool    isValidInput(char **argv)
 
 int main(int argc, char **argv)
 {   
-    if (argc < 2 || !(isValidInput(++argv)))
+    argv++;
+    if (argc < 2 || !(isValidInput(argv)))
     {
         std::cout << "Error : Enter a valid Positive Integer Sequence"<< std::endl;
         return (0);

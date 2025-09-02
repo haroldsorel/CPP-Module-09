@@ -69,7 +69,7 @@ bool    BitcoinExchange::getValue(std::string &date, float num)
     //if a precise date is found return the iterator to that data-rate
     if ((it = (this->_rates).find(date)) != (this->_rates).end())
     {
-        std::cout << date << '\t' << "=>" << '\t' << num << " = " << it->second * num << " (according to data from " << it->first << ')' << std::endl;
+        std::cout << date << '\t' << "=>" << '\t' << num << " = " << it->second * num << std::endl;
         return (true);
     }
 
@@ -83,7 +83,7 @@ bool    BitcoinExchange::getValue(std::string &date, float num)
 
     //if upper_bounds returned something do it-- to get the past data and not the future data 
     it--;
-    std::cout << date << '\t' << "=>" << '\t' << num << " = " << it->second * num << " (according to data from " << it->first << ')' << std::endl;
+    std::cout << date << '\t' << "=>" << '\t' << num << " = " << it->second * num << std::endl;
     return (true);
 }
 

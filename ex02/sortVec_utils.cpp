@@ -98,34 +98,33 @@ static std::vector<int> pend_insertion_order(size_t size)
     int inside;
 
     //hardcoding case 1 and 2
-    insertion_order.push_back(1);
+    insertion_order.push_back(0);
     if (size == 1)
         return (insertion_order);
     if (size == 2)
     {
-        insertion_order.push_back(2);
+        insertion_order.push_back(1);
         return (insertion_order);
     }
     //generating jacobthal's number
     jacobsthal_numbers = jacobsthal_generator(size);
-    std::cout << "jacobsthal number : " << jacobsthal_numbers << std::endl;
+    //std::cout << "jacobsthal number : " << jacobsthal_numbers << std::endl;
     //filling jacobsthal's numbers and backfilling between milestones 
     for (size_t i = 1; i < jacobsthal_numbers.size(); i++)
     {
         milestone2 = jacobsthal_numbers[i];
-        insertion_order.push_back(milestone2);
+        insertion_order.push_back(milestone2 - 1);
         inside = milestone2 - 1;
         while (inside > milestone1)
         {
-            insertion_order.push_back(inside);
+            insertion_order.push_back(inside - 1);
             inside--;
         }
         milestone1 = milestone2;
     }
     //backfilling the rest if there is no next milestone
     for (int i = size; i > milestone2; i--)
-        insertion_order.push_back(i);
-    std::cout << "insertion order : " << insertion_order << std::endl;
+        insertion_order.push_back(i - 1);
     return (insertion_order);
 }
 
@@ -158,18 +157,17 @@ std::vector<int> insert(std::vector<std::pair<int, int> > pairs, int remainer)
     }
     //first element in pend is smaller than the first element main, 
     //we insert it in the ‘0’ index of S.
-    std::cout << "main : " << main << std::endl;
-    std::cout << "pend : " << pend << std::endl;
+    //std::cout << "main : " << main << std::endl;
+    //std::cout << "pend : " << pend << std::endl;
     main.insert(main.begin(), pend.front());
     pend.erase(pend.begin());
-    std::cout << "main after : " << main << std::endl;
-    std::cout << "pend after : " << pend << std::endl;
+    //std::cout << "main after : " << main << std::endl;
+    //std::cout << "pend after : " << pend << std::endl;
     if (pairs.size() != 1)
     {
         //we build a jacobsthal number vector based on the size of the pend.
         //this will be used to determine the pend insertion order
         pend_order_index = pend_insertion_order(pend.size());
-        std::cout << "pend order by index: " << pend_order_index << std::endl;
         //now that we have the insertion order i need to use the pairs again so i have the upperbounds
         //first i need to take off the first pair because i already inserted it
         pairs.erase(pairs.begin());
